@@ -88,23 +88,17 @@ Use a credited, place-specific Incredible India photo only with express permissi
 
 ## Deployment
 
-Deploy the frontend and API as separate services from this repository. Vercel serves the Vite frontend; the Express API is deployed separately because this project uses a long-lived streaming response.
+Deploy the frontend and streaming API together on Vercel. The AI API is a serverless function, so it does not need a separate paid server.
 
 ### Frontend — Vercel
 
 1. Push this repository to GitHub, then in Vercel choose **Add New → Project** and import the repository.
 2. Use the repository root. Vercel should detect Vite; use `npm run build` as the build command and `dist` as the output directory.
-3. Add `VITE_API_URL` as an environment variable pointing to the deployed Render API origin, with no trailing slash (for example, `https://somewhere-in-india-api.onrender.com`). The destination browser does not need this variable for its catalog and trip-list features, but the AI trip planner does.
-4. Deploy. The included `vercel.json` sends client-side routes back to the app so refreshes and direct links work.
-5. After the first deployment, copy the production site origin and set it as `CLIENT_ORIGIN` on Render. Redeploy the API and then redeploy Vercel if you changed `VITE_API_URL`.
+3. Add `GROQ_API_KEY` as a private Vercel environment variable for Production (and Preview if desired). Optionally set `GROQ_MODEL`; the default is `openai/gpt-oss-20b`. Never use a `VITE_` prefix for the secret.
+4. Leave `VITE_API_URL` unset so the app calls its same-origin `/api/chat` function.
+5. Deploy or redeploy. The included `vercel.json` sends client-side routes back to the app, while `api/chat.js` provides the streaming chat endpoint.
 
-### API — Render
-
-1. In Render choose **New → Blueprint** and connect the same GitHub repository. Render reads `render.yaml` to configure the API service.
-2. Set `GROQ_API_KEY` in Render's private environment settings when prompted. Never put the key in GitHub or in a `VITE_` variable.
-3. After deploying, copy the Render service origin and set it as `VITE_API_URL` in Vercel. Redeploy the frontend, then verify `https://<your-render-service>.onrender.com/api/health` returns `{"status":"ok"}` and test the planner.
-
-The Render blueprint sets `CLIENT_ORIGIN` to the production Vercel domain and uses `GROQ_MODEL=openai/gpt-oss-20b`.
+Vercel's Hobby plan and Groq's free API allowance may have usage and rate limits; free availability is not unlimited or guaranteed. The API key must be obtained from Groq and entered privately in Vercel.
 
 The Git ignore rules exclude `.env` files (except the safe `.env.example` template), dependencies, and build output. Do not commit credentials.
 
