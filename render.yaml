@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: somewhere-in-india-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: CLIENT_ORIGIN
+        value: https://somewhere-in-india.vercel.app

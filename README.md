@@ -100,11 +100,11 @@ Deploy the frontend and API as separate services from this repository. Vercel se
 
 ### API — Render
 
-1. In Render choose **New → Web Service** and connect the same GitHub repository. Use the repository root.
-2. Set the start command to `npm start`. Render supplies `PORT`.
-3. Set `GROQ_API_KEY` in Render's private environment settings and optionally set `GROQ_MODEL`. Never put the key in GitHub or in a `VITE_` variable.
-4. Set `CLIENT_ORIGIN` to the exact deployed Vercel production origin (for example, `https://somewhere-in-india.vercel.app`). The API uses this origin for CORS.
-5. After deploying, verify `https://<your-render-service>.onrender.com/api/health` returns `{"status":"ok"}`.
+1. In Render choose **New → Blueprint** and connect the same GitHub repository. Render reads `render.yaml` to configure the API service.
+2. Set `GROQ_API_KEY` in Render's private environment settings when prompted. Never put the key in GitHub or in a `VITE_` variable.
+3. After deploying, copy the Render service origin and set it as `VITE_API_URL` in Vercel. Redeploy the frontend, then verify `https://<your-render-service>.onrender.com/api/health` returns `{"status":"ok"}` and test the planner.
+
+The Render blueprint sets `CLIENT_ORIGIN` to the production Vercel domain and uses `GROQ_MODEL=openai/gpt-oss-20b`.
 
 The Git ignore rules exclude `.env` files (except the safe `.env.example` template), dependencies, and build output. Do not commit credentials.
 
